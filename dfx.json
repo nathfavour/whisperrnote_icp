@@ -15,7 +15,7 @@
         }
       },
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
-    },
+    }
 
   },
   "networks": {
