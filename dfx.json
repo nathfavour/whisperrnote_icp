@@ -16,18 +16,7 @@
       },
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
-    "www": {
-      "dependencies": ["encrypted_notes", "internet-identity"],
-      "build": [
-        "cd frontend && npm i --include=dev && npm run build && cd - && rm -r public > /dev/null 2>&1; cp -r frontend/public ./"
-      ],
-      "frontend": {
-        "entrypoint": "public/index.html"
-      },
-      "source": ["public/"],
-      "type": "assets",
-      "output_env_file": "frontend/.env"
-    }
+
   },
   "networks": {
     "local": {
