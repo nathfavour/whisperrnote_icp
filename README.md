@@ -1,6 +1,6 @@
-# whisperrnote_icp Backend Structure
+# whisperrnote_icp Structure
 
-This backend is structured to mirror the application and data model of the original [whisperrnote](https://github.com/buildathonzx/whisperrnote) project. Each module in `backend/src` corresponds to a major entity in the appwrite data model (users, notes, tags, etc.).
+This contract is structured to fit the application and data model of the  [whisperrnote](https://github.com/buildathonzx/whisperrnote) frontend project. Each module in `backend/src` corresponds to a major entity in the appwrite data model (users, notes, tags, etc.).
 
 ## Structure
 

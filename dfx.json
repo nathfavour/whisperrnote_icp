@@ -2,7 +2,7 @@
   "canisters": {
     "encrypted_notes": {
       "type": "rust",
-      "candid": "backend/src/encrypted_notes_rust.did",
+      "candid": "contracts/src/encrypted_notes_rust.did",
       "package": "encrypted_notes_backend"
     },
     "internet-identity": {
