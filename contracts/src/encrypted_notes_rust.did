@@ -3,46 +3,21 @@ type anon_class_15_1 =
    create_note: () -> (nat);
    delete_note: (nat) -> ();
    get_notes: () -> (vec EncryptedNote);
-   update_note: (
-      nat,
-      text,
-      opt text,
-      opt text,
-      opt vec text,
-      opt vec text,
-      opt vec text,
-      opt vec text,
-      opt vec text,
-      opt text,
-      opt bool,
-      opt text,
-      opt text
-    ) -> ();
+   get_note: (nat) -> (opt EncryptedNote);
+   update_note: (nat, text) -> ();
    add_user: (nat, text) -> ();
    remove_user: (nat, text) -> ();
    whoami: () -> (text);
    symmetric_key_verification_key_for_note: () -> (text);
    encrypted_symmetric_key_for_note: (nat, blob) -> (text);
  };
-type EncryptedNote = 
+ type EncryptedNote = 
   record {
     id: nat;
     encrypted_text: text;
     owner: text;
     users: vec text;
-    user_id: opt text;
-    created_at: opt text;
-    updated_at: opt text;
-    is_public: opt bool;
-    status: opt text;
-    parent_note_id: opt text;
-    title: opt text;
-    content: opt text;
-    tags: opt vec text;
-    attachments: opt vec text;
-    comments: opt vec text;
-    extensions: opt vec text;
-    collaborators: opt vec text;
-    metadata: opt text;
+    created_at: nat64;
+    updated_at: nat64;
   };
 service : () -> anon_class_15_1

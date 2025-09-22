@@ -17,24 +17,9 @@ pub struct EncryptedNote {
     id: NoteId,
     encrypted_text: String,
     owner: PrincipalName,
-    /// Principals with whom this note is shared. Does not include the owner.
-    /// Needed to be able to efficiently show in the UI with whom this note is shared.
     users: Vec<PrincipalName>,
-    // Extended fields for appwrite compatibility
-    user_id: Option<String>,
-    created_at: Option<String>,
-    updated_at: Option<String>,
-    is_public: Option<bool>,
-    status: Option<String>, // draft, published, archived
-    parent_note_id: Option<String>,
-    title: Option<String>,
-    content: Option<String>,
-    tags: Option<Vec<String>>,
-    attachments: Option<Vec<String>>,
-    comments: Option<Vec<String>>,
-    extensions: Option<Vec<String>>,
-    collaborators: Option<Vec<String>>,
-    metadata: Option<String>,
+    created_at: u64,
+    updated_at: u64,
 }
 
 impl EncryptedNote {
@@ -186,6 +171,14 @@ fn get_notes() -> Vec<EncryptedNote> {
     })
 }
 
+#[update]
+fn get_note(id: NoteId) -> Option<EncryptedNote> {
+    let user_str = caller().to_string();
+    NOTES.with_borrow(|notes| {
+        notes.get(&id).filter(|n| n.is_authorized(&user_str))
+    })
+}
+
 /// Delete this [caller]'s note with given id. If none of the
 /// existing notes have this id, do nothing.
 /// [id]: the id of the note to be deleted
@@ -238,23 +231,8 @@ fn delete_note(note_id: u128) {
 ///     [caller] is not the note's owner and not a user with whom the note is shared
 ///     [encrypted_text] exceeds [MAX_NOTE_CHARS]
 #[update]
-fn update_note(
-    id: NoteId,
-    encrypted_text: String,
-    title: Option<String>,
-    content: Option<String>,
-    tags: Option<Vec<String>>,
-    attachments: Option<Vec<String>>,
-    comments: Option<Vec<String>>,
-    extensions: Option<Vec<String>>,
-    collaborators: Option<Vec<String>>,
-    metadata: Option<String>,
-    is_public: Option<bool>,
-    status: Option<String>,
-    parent_note_id: Option<String>,
-) {
+fn update_note(id: NoteId, encrypted_text: String) {
     let user_str = caller().to_string();
-
     NOTES.with_borrow_mut(|notes| {
         if let Some(mut note_to_update) = notes.get(&id) {
             if !note_to_update.is_authorized(&user_str) {
@@ -262,18 +240,7 @@ fn update_note(
             }
             assert!(encrypted_text.chars().count() <= MAX_NOTE_CHARS);
             note_to_update.encrypted_text = encrypted_text;
-            note_to_update.title = title;
-            note_to_update.content = content;
-            note_to_update.tags = tags;
-            note_to_update.attachments = attachments;
-            note_to_update.comments = comments;
-            note_to_update.extensions = extensions;
-            note_to_update.collaborators = collaborators;
-            note_to_update.metadata = metadata;
-            note_to_update.is_public = is_public;
-            note_to_update.status = status;
-            note_to_update.parent_note_id = parent_note_id;
-            note_to_update.updated_at = Some(ic_cdk::api::time().to_string());
+            note_to_update.updated_at = ic_cdk::api::time();
             notes.insert(id, note_to_update);
         }
     })
@@ -294,25 +261,14 @@ fn create_note() -> NoteId {
     NOTES.with_borrow_mut(|id_to_note| {
         NOTE_OWNERS.with_borrow_mut(|owner_to_nids| {
             let next_note_id = NEXT_NOTE_ID.with_borrow(|id| *id.get());
+let now = ic_cdk::api::time();
 let new_note = EncryptedNote {
     id: next_note_id,
     owner: owner.clone(),
     users: vec![],
     encrypted_text: String::new(),
-    user_id: Some(owner.clone()),
-    created_at: Some(ic_cdk::api::time().to_string()),
-    updated_at: Some(ic_cdk::api::time().to_string()),
-    is_public: Some(false),
-    status: Some("draft".to_string()),
-    parent_note_id: None,
-    title: None,
-    content: None,
-    tags: None,
-    attachments: None,
-    comments: None,
-    extensions: None,
-    collaborators: None,
-    metadata: None,
+    created_at: now,
+    updated_at: now,
 };
             if let Some(mut owner_nids) = owner_to_nids.get(&owner) {
                 assert!(owner_nids.ids.len() < MAX_NOTES_PER_USER);
