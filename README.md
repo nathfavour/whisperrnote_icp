@@ -1,6 +1,8 @@
 # whisperrnote_icp (Minimal Production Variant)
 
-This repository now contains a single focused Internet Computer canister that stores and shares encrypted notes. All non‑essential experimental modules were removed for a lean, auditable surface area.
+encrypted_notes canister created with canister id: uxrrr-q7777-77774-qaaaq-cai
+
+internet-identity canister created with canister id: rdmx6-jaaaa-aaaaa-aaadq-cai
 
 ## Current Scope
 - Create empty encrypted notes
